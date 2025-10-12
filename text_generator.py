@@ -8,12 +8,16 @@ client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
-prompt = "Hello Gemini! How are you today?"
+prompt = "Hello Gemini! How are you today? And also, give me a random word"
 
-response = client.models.generate_content(
-    model="gemini-2.5-pro", #gemini-2.5-pro has only 100 requests for free per day
-    contents=prompt,
-    config = {
-        "temperature": 0.7
-    }
-)
+def call_response():
+    global response
+    response = client.models.generate_content(
+        model="gemini-2.5-pro",
+        contents=prompt,
+        config = {
+            "temperature": 0.7
+        }
+    )
+
+    return response

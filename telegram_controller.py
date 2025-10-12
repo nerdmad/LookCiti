@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 from dotenv import load_dotenv
 import os
-from text_generator import response
+from text_generator import call_response
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ async def start_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text('thighs🤤🤤🤤')
 
 async def generate_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(response.text)
+    await update.message.reply_text(call_response().text)
 
 if __name__ == '__main__':
     print("Starting bot...")
