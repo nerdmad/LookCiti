@@ -10,6 +10,7 @@ load_dotenv()
 API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
 BOT_USERNAME = "@LookCitiBot"
 
+#text generator
 async def generate_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None: #ai intergration test
     await update.message.reply_text(call_response().text)
 
