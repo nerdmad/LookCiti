@@ -21,25 +21,33 @@ async def start_buttons(update: Update, context: CallbackContext):
         KeyboardButton("Test 1"), KeyboardButton("Test 2") #row 1
         ],
         [
-        KeyboardButton("go kill yourself", request_location=True), KeyboardButton("secret option") #row 2
+        KeyboardButton("give location?", request_location=True), KeyboardButton("secret option") #row 2
         ]
     ]
-    reply_menu = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True) #i noticed a bug when using the menu on mobile, so i mightt need to fizx that
+    reply_menu = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True) #i noticed a bug when using the menu on mobile, so i might need to fix that
     await update.message.reply_text("Please choose options listed below:", reply_markup=reply_menu)
     
 async def button_handling(update: Update, context: CallbackContext):
     text = update.message.text
-    if text == "go kill yourself":
-        location = update.message.location
-        latitude = location.latitude
-        longitude = location.longitude
-        print(latitude, longitude)
-        await update.message.reply_text("aight imma dox you lil bro")
-    elif text == "secret option":
-        print("user used secret option")
+    if text == "secret option":
+        print("user has used secret option")
         await update.message.reply_text('thighs🤤🤤🤤')
     else:
         await update.message.reply_text(f"im gonna touch you in this way: {text}")
+
+async def location_handling(update: Update, context: CallbackContext):
+    global location
+    location = update.message.location
+    if location is None:
+        print("location not found")
+        await update.message.reply_text(f"Location not identified, please, enable gps in settings or try again later.")
+    else:
+        print(location)
+        global latitude, longitude
+        latitude = location.latitude
+        longitude = location.longitude
+        await update.message.reply_text(f"Location found, latitude={latitude}, longitude={longitude}")
+
 
 
 #if run from this file
@@ -50,6 +58,7 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("start", start_buttons)) #also MessageHandler exists
     app.add_handler(CommandHandler("ai", generate_cmd))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, button_handling))
+    app.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, location_handling))
 
     print("Polling...")
     app.run_polling()
