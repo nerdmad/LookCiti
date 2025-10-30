@@ -4,6 +4,7 @@ import asyncio
 from dotenv import load_dotenv
 import os
 from text_generator import call_response
+from foliumconf.map_gen import generate_map
 
 load_dotenv()
 
@@ -41,16 +42,16 @@ async def location_handling(update: Update, context: CallbackContext):
     global location
     location = update.message.location
     if location is None:
-        print("location not found")
-        await update.message.reply_text(f"Location not identified, please, enable gps in settings or try again later.")
+        await update.message.reply_text(f"Location not identified, please, enable gps in settings or try again later. Switching to default location...")
     else:
         print(location)
         global latitude, longitude
         latitude = location.latitude
         longitude = location.longitude
-        await update.message.reply_text(f"Location found, latitude={latitude}, longitude={longitude}")
-
-
+        await update.message.reply_text(f"Location found, latitude={latitude}, longitude={longitude}. Generating map, please wait...")
+        generate_map(latitude, longitude)
+        await asyncio.sleep(10) #waiting for map to generate
+        await update.message.reply_photo('foliumconf/img.png')
 
 #if run from this file
 if __name__ == '__main__':
