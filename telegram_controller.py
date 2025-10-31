@@ -57,14 +57,14 @@ async def location_handling(update: Update, context: CallbackContext):
         longitude = location.longitude
         await update.message.reply_text(f"Location found, latitude={latitude}, longitude={longitude}. Generating map, please wait...")
         generate_map(latitude, longitude)
-        await asyncio.sleep(10) #waiting for map to generate
         await update.message.reply_photo('foliumconf/img.png')
+        await asyncio.sleep(2)
         await update.message.reply_text(find_closest(latitude, longitude))
 
 #if run from this file
 if __name__ == '__main__':
     print("Starting bot...")
-    app = ApplicationBuilder().token(API_TOKEN).build()
+    app = ApplicationBuilder().token(API_TOKEN).read_timeout(30).write_timeout(30).build()
 
     app.add_handler(CommandHandler("start", hello)) #also MessageHandler exists
     app.add_handler(CommandHandler("buttons", start_buttons))
