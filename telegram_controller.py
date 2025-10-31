@@ -4,7 +4,8 @@ import asyncio
 from dotenv import load_dotenv
 import os
 from text_generator import call_response
-from foliumconf.map_gen import generate_map
+from foliumconf.map_gen import generate_map, find_closest
+import random
 
 load_dotenv()
 
@@ -15,16 +16,19 @@ latitude = None
 
 #text generator
 async def generate_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None: #ai intergration test
-    await update.message.reply_text(call_response().text)
+    await update.message.reply_text(call_response())
+
+async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text('Добро пожаловать в бот LookCiti! Для начала работы напишите "/buttons".')
 
 #button creation and option handling
 async def start_buttons(update: Update, context: CallbackContext):
     keyboard = [
         [
-        KeyboardButton("Test 1"), KeyboardButton("Test 2") #row 1
+        KeyboardButton("О Боте") #row 1
         ],
         [
-        KeyboardButton("give location?", request_location=True), KeyboardButton("secret option") #row 2
+        KeyboardButton("Показать ближайшие интересные места", request_location=True), KeyboardButton("secret option") #row 2
         ]
     ]
     reply_menu = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True) #i noticed a bug when using the menu on mobile, so i might need to fix that
@@ -35,8 +39,11 @@ async def button_handling(update: Update, context: CallbackContext):
     if text == "secret option":
         print("user has used secret option")
         await update.message.reply_text('thighs🤤🤤🤤')
+    elif text == "О Боте":
+        await update.message.reply_text(f"Nothing here yet... however you can check our github:\nhttps://github.com/nerdmad/LookCiti")
     else:
-        await update.message.reply_text(f"im gonna touch you in this way: {text}")
+        await update.message.reply_photo(random.choice(os.getenv("LST").split(' ')))
+    
 
 async def location_handling(update: Update, context: CallbackContext):
     global location
@@ -52,13 +59,15 @@ async def location_handling(update: Update, context: CallbackContext):
         generate_map(latitude, longitude)
         await asyncio.sleep(10) #waiting for map to generate
         await update.message.reply_photo('foliumconf/img.png')
+        await update.message.reply_text(find_closest(latitude, longitude))
 
 #if run from this file
 if __name__ == '__main__':
     print("Starting bot...")
     app = ApplicationBuilder().token(API_TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start_buttons)) #also MessageHandler exists
+    app.add_handler(CommandHandler("start", hello)) #also MessageHandler exists
+    app.add_handler(CommandHandler("buttons", start_buttons))
     app.add_handler(CommandHandler("ai", generate_cmd))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, button_handling))
     app.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, location_handling))
