@@ -32,7 +32,7 @@ def generate_map(latitude, longitude) -> None:
     img_data = m._to_png(3)
     img = Image.open(io.BytesIO(img_data))
     img.save('foliumconf/img.png')
-    m.save('foliumconf/map.html')
+    m.save('foliumconf/index.html')
 
 #generate_map(None, None) for testing
 

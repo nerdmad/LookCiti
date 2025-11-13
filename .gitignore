@@ -2,3 +2,7 @@
 __pycache__
 foliumconf/map.html
 teto
+auto_localhost (scrapped).py
+ngrok_launch.py
+foliumconf/index.html
+logs.log
